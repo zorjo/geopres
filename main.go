@@ -45,7 +45,7 @@ func main() {
 			msg.ReplyToMessageID = update.Message.MessageID
 			msg.Text = "You have checked in"
 
-		}
+		}else if update.Message.Location != nil && State[int(update.Message.Chat.ID)] == "checkout" {
 
 		//create commands to send location
 		if update.Message.IsCommand() {
@@ -61,7 +61,58 @@ func main() {
 			case "checkout":
 				State[int(update.Message.Chat.ID)] = "checkout"
 				msg.Text = "You have checked out"
-
+			case "addoffice":
+			//add office location to the database and return the office id
+			State[int(update.Message.Chat.ID)] = "addoffice"
+			msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+				tgbotapi.NewKeyboardButtonRow(
+					tgbotapi.NewKeyboardButtonLocation("Share Office Location"),
+				),
+			)
+			msg.Text = "Please share the office location"
+			case "subscribe":
+				args := update.Message.CommandArguments()
+				if args == "" {
+					msg.Text = "Please provide an office ID. Usage: /subscribe <office_id>"
+				} else {
+					State[int(update.Message.Chat.ID)] = "subscribe"
+					msg.Text = fmt.Sprintf("You have subscribed to office %s updates", args)
+				}
+			case "deloffice":
+				args := update.Message.CommandArguments()
+				if args == "" {
+					msg.Text = "Please provide an office ID. Usage: /deloffice <office_id>"
+				} else {
+					State[int(update.Message.Chat.ID)] = "deloffice"
+					msg.Text = fmt.Sprintf("Deleting office %s", args)
+				}
+			case "listoffice":
+							State[int(update.Message.Chat.ID)] = "listoffice"
+							rows, err := db.Query("SELECT id, latitude, longitude FROM offices")
+							if err != nil {
+								msg.Text = "Error fetching offices"
+							} else {
+								var officeList string = "*Registered Offices:*\n"
+								for rows.Next() {
+									var id int
+									var lat, long float64
+									if err := rows.Scan(&id, &lat, &long); err != nil {
+										continue
+									}
+									officeList += fmt.Sprintf("ID: `%d` \| Location: `%f, %f`\n", id, lat, long)
+								}
+								msg.Text = officeList
+								msg.ParseMode = "MarkdownV2"
+							}
+							defer rows.Close()
+			case "status":
+							State[int(update.Message.Chat.ID)] = "status"
+							msg.Text = "Current status:"
+			case "history":
+							State[int(update.Message.Chat.ID)] = "history"
+							msg.Text = "Your attendance history:"
+			case "help":
+				msg.Text = "Available commands: \n/checkin - Check in to the office \n/checkout - Check out of the office \n/addoffice - Add office location"
 			default:
 				msg.Text = "Unsupported command, check /help"
 			}
