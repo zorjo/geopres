@@ -1,5 +1,6 @@
 # GeoPresence Bot 🌍
 
+![GeoPresence Bot Logo](logo.webp)
 A Telegram bot for managing employee attendance and office locations using geolocation data.
 
 ## 🌟 Features
