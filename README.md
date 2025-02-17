@@ -38,7 +38,7 @@ The application requires the following Postgres migration script to run
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/geopres.git
+git clone https://github.com/zorjo/geopres.git
 cd geopres
 ```
 
