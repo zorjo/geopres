@@ -2,7 +2,7 @@
 
 ![GeoPresence Bot Logo](logo.webp)
 A Telegram bot for managing employee attendance and office locations using geolocation data.
-
+You can view a *live demo* of this project [here](https://t.me/a11cebot).
 ## 🌟 Features
 
 - **Check-in/Check-out System**: Employees can check in and out using their current location
